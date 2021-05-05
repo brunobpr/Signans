@@ -23,11 +23,19 @@ from pydub.playback import play
 from google.cloud import translate_v2 as translate
 from random import *
 
-google_translation = os.path.join(os.getcwd(), "stately-vector.json")
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] =  google_translation
+google_translation = os.path.join(os.getcwd(), "authentication.json")
 
+if os.path.isfile(google_translation):
+    print("Google Translator Authenticated")
+    google_auth = True
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] =  google_translation
+else:
+    print("Google Translator Authentication Failed")
+    google_auth = False
+    
 config_file = os.path.join('TensorFlow-Model', 'pipeline.config')
 config = config_util.get_configs_from_pipeline_file(config_file)
+category_index = label_map_util.create_category_index_from_labelmap(os.path.join('label_map.pbtxt'))
 
 # Loading the model
 detection_model = model_builder.build(model_config=config['model'], is_training=False)
@@ -47,10 +55,6 @@ cap = cv2.VideoCapture(0)
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-
-args = parser.parse_args()
-   
-
 lastest_reading = ""
 phrase = ""
 TGREEN =  '\033[32m'
@@ -59,6 +63,7 @@ ENDC = '\033[m'
 parser = argparse.ArgumentParser()
 parser.add_argument('--language', "-l")
 parser.add_argument('--speed', '-s')
+args = parser.parse_args()
 if args.language != None:
     output_language = str(args.language)
 else:
@@ -96,7 +101,7 @@ def get_lastest_reading():
                 if phrase != "":
                     spell = Speller()
                     phrase = spell(phrase)
-                    if lang != "en":
+                    if lang != "en" and google_auth:
                         translate_client = translate.Client()
                         translated_test = translate_client.translate(phrase, target_language=lang)["translatedText"]
                         voice = gTTS( text=translated_test, lang=lang, tld=top_domain[output_language], slow=False)

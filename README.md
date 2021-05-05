@@ -92,6 +92,8 @@ At the moment the supported languages are:
 |**Spanish**    |   es|
 |**Portuguese**  |    pt |
 |**Mandarin**  |    zh|
+
+
 To change the language, run the scrip with the argument --language or -l 
 ```bash
 python Signans.py --language {code}
