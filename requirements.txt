@@ -1,0 +1,12 @@
+tensorflow
+tensorflow_hub  
+opencv-python
+gtts
+ipython
+matplotlib
+tf_slim
+scipy
+pyyaml
+autocorrect
+pydub
+google-cloud-translate==2.0.1
